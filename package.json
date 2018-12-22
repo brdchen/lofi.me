@@ -1,0 +1,12 @@
+{
+    "name": "lofi.me",
+    "version": "1.0.0",
+    "description": "24-7 Lofi Discord Bot",
+    "main": "bot.js",
+    "author": "Bradford Chen",
+    "dependencies": {
+        "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+        "winston": "^3.1.0",
+        "ytdl-core": "^0.28.3"
+    }
+}
