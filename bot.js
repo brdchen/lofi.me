@@ -1,8 +1,17 @@
 const Discord = require('discord.js');
 const logger = require('winston');
 const auth = require('./auth.json');
-const yt = require('ytdl-core');
 const pkg = require('./package.json');
+
+// youtube stream querying and streaming
+const yt = require('ytdl-core');
+const searchYoutube = require('youtube-api-v3-search');
+const ytkey = 'AIzaSyAsic13sh6P8i1gm8KKZnKGwCw6aGwdqOk';
+const ytoptions = {
+    q:'lofi live',
+    part:'snippet',
+    type:'video'
+}
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -69,8 +78,17 @@ bot.on('message', message => {
                 if (!message.guild) return;
                 if (message.member.voiceChannel) {
                     message.member.voiceChannel.join()
-                        .then(connection => {
-                            message.reply('SUCCESSFULLY CONNECTED BEEP BOOP');
+                        .then(async connection => {
+                            logger.info('SUCCESSFULLY CONNECTED BEEP BOOP');
+                            logger.info('entering async');
+                            let result = await searchYoutube(ytkey, ytoptions);
+                            logger.info('finished waiting');
+                            if (!result) {
+                                logger.info('YouTube search failed! API Sucks!');
+                            } else {
+                                logger.info(result);
+                            }
+                        // connection.playStream();
                         })
                         .catch(console.log);
                 } else {
