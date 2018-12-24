@@ -25,8 +25,8 @@ ___
 
 1. Add song of the day feature with Youtube link
 2. Add support for listening to endless lofi in channel
-    1. Cannot do direct integration with spotify, but can listen to YouTube
-    2. Integrate with YouTube API or grab mp3 from YouTube and play it
+    1. Cannot do direct integration with spotify, but can listen to YouTube (DONE)
+    2. Integrate with YouTube API or grab mp3 from YouTube and play it (DONE)
     3. Add Volume and Play/Pause Control
     4. SoundCloud integration...?
 3. Add additional fun features
