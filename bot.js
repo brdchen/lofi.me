@@ -6,6 +6,7 @@ const pkg = require('./package.json');
 // youtube stream querying and streaming
 const yt = require('ytdl-core');
 const searchYoutube = require('youtube-api-v3-search');
+const ytUrlBase = 'https://www.youtube.com/watch?v=';
 const ytkey = 'AIzaSyAsic13sh6P8i1gm8KKZnKGwCw6aGwdqOk';
 const ytoptions = {
     q:'lofi live',
@@ -80,15 +81,35 @@ bot.on('message', message => {
                     message.member.voiceChannel.join()
                         .then(async connection => {
                             logger.info('SUCCESSFULLY CONNECTED BEEP BOOP');
-                            logger.info('entering async');
+                            // query youtube for search results for 'lofi live'
                             let result = await searchYoutube(ytkey, ytoptions);
-                            logger.info('finished waiting');
                             if (!result) {
                                 logger.info('YouTube search failed! API Sucks!');
                             } else {
-                                logger.info(result);
+                                // logger.info(result);
+                                // logger.info(result.items[0]);
+                                // logger.info(result.items[0].snippet.liveBroadcastContent);
+
+                                // parse the JSON returned by searching YouTube and look
+                                // for any live videos that are in the search results.
+                                let ytstream;
+                                for (var i = 0; i < result.items.length; i++) {
+                                    if (result.items[i].snippet.liveBroadcastContent === 'live') {
+                                        ytstream = yt(ytUrlBase + result.items[i].id.videoId, { audioonly: true });
+                                    }
+                                }
+                                // if we found a live video, stream it in the channel. If not, play the first video in the search result
+                                let dispatcher;
+                                if (ytstream) {
+                                    dispatcher = connection.playStream(ytstream, { passes: 1});
+                                } else {
+                                    ytstream = yt(ytUrlBase + result.items[0].id.videoId, { audioonly: true });
+                                }
+                                // if we cannot play the youtube video, then output error
+                                dispatcher.on('error', (err) => {
+                                    message.reply('error: ' + err);
+                                });
                             }
-                        // connection.playStream();
                         })
                         .catch(console.log);
                 } else {
