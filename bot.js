@@ -7,7 +7,6 @@ const pkg = require('./package.json');
 const yt = require('ytdl-core');
 const searchYoutube = require('youtube-api-v3-search');
 const ytUrlBase = 'https://www.youtube.com/watch?v=';
-const ytkey = 'AIzaSyAsic13sh6P8i1gm8KKZnKGwCw6aGwdqOk';
 const ytoptions = {
     q:'lofi live',
     part:'snippet',
