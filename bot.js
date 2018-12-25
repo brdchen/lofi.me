@@ -2,10 +2,11 @@ const Discord = require('discord.js');
 const logger = require('winston');
 const auth = require('./auth.json');
 const pkg = require('./package.json');
-
-// youtube stream querying and streaming
 const yt = require('ytdl-core');
 const searchYoutube = require('youtube-api-v3-search');
+const SpotifyWebApi = require('spotify-web-api-node');
+
+// inputs for querying YouTube
 const ytUrlBase = 'https://www.youtube.com/watch?v=';
 const ytoptions = {
     q:'lofi live',
@@ -22,6 +23,24 @@ logger.level = 'debug';
 
 // Initialize Discord Bot
 const bot = new Discord.Client();
+const spotifyApi = new SpotifyWebApi({
+  clientId: auth.clientId,
+  clientSecret: auth.clientSecret
+});
+
+// Retrieve an access token.
+spotifyApi.clientCredentialsGrant().then(
+  function(data) {
+    console.log('The access token expires in ' + data.body['expires_in']);
+    console.log('The access token is ' + data.body['access_token']);
+
+    // Save the access token so that it's used in future calls
+    spotifyApi.setAccessToken(data.body['access_token']);
+  },
+  function(err) {
+    console.log('Something went wrong when retrieving an access token', err);
+  }
+);
 
 bot.login(auth.token);
 
@@ -29,6 +48,7 @@ bot.on('ready', () => {
     logger.info('Connected');
     logger.info('Logged in as: ');
     logger.info(pkg.name + ' - (' + pkg.author + ')');
+    bot.user.setActivity('Jamming out');
 });
 
 bot.on('message', message => {
@@ -73,7 +93,7 @@ bot.on('message', message => {
                 }
             break;
 
-            // enter current voice channel and start playing songs
+            // !stream causes bot to join current voice channel and start streaming music
             case 'stream':
                 if (!message.guild) return;
                 if (message.member.voiceChannel) {
@@ -81,9 +101,9 @@ bot.on('message', message => {
                         .then(async connection => {
                             logger.info('SUCCESSFULLY CONNECTED BEEP BOOP');
                             // query youtube for search results for 'lofi live'
-                            let result = await searchYoutube(ytkey, ytoptions);
+                            let result = await searchYoutube(auth.ytkey, ytoptions);
                             if (!result) {
-                                logger.info('YouTube search failed! API Sucks!');
+                                logger.info('YouTube search failed.');
                             } else {
                                 // logger.info(result);
                                 // logger.info(result.items[0]);
@@ -92,7 +112,7 @@ bot.on('message', message => {
                                 // parse the JSON returned by searching YouTube and look
                                 // for any live videos that are in the search results.
                                 let ytstream;
-                                for (var i = 0; i < result.items.length; i++) {
+                                for (var i = 0; i < result.items.length && !ytstream; i++) {
                                     if (result.items[i].snippet.liveBroadcastContent === 'live') {
                                         ytstream = yt(ytUrlBase + result.items[i].id.videoId, { audioonly: true });
                                     }
@@ -114,6 +134,40 @@ bot.on('message', message => {
                 } else {
                     message.reply('You need to join a voice channel first!');
                 }
+            break;
+
+            // !songoftheday suggests song of the day with YouTube link using node.js spotify api
+            // either search for song or browse category/genre/featured playlists
+            // select a random song and store it as the song for the whole day somehow:
+            // option 1: store song and date as a json and update when date is not same as json date
+            // option 2: just suggest a random song and scrap song of the day
+            // option 3: create a persistent queue and just poll it. when date changes remove from queue.
+            // option 4: manually change the link everyday (not preferred)
+            case 'songoftheday':
+                spotifyApi.searchPlaylists('lofi')
+                    .then(function(data) {
+                        logger.info('Found playlists are', data.body);
+                    }, function(err) {
+                        logger.info('Something went wrong!', err);
+                    });
+                spotifyApi.searchTracks('lofi')
+                    .then(function(data) {
+                        logger.info('Search tracks by "lofi"', data.body);
+                    }, function(err) {
+                        logger.info('Something went wrong!', err);
+                    });
+
+            break;
+
+            // !recommend me recommends a random GOOD song for the user and provides a YouTube link
+            // option 1: query the list of top songs from lofi playlists based on popularity
+            // option 2: query spotify search results and pick a high popularity track
+            // option 3: query YouTube and return a specific high ranking track (we can limit
+            // length to be <7 or 8 mins to avoid live and mixes). Hard to recommend different tracks
+            // option 4: keep a list of best artists, query their top songs on spotify and select randomly
+            // option 5: totally random spotify lookup (not recommended)
+            case 'recommendme':
+                message.reply('');
             break;
          }
      }
