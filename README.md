@@ -7,18 +7,18 @@
 Lofi.me is a Discord bot meant for lofi lovers to play and discover lofi. It
 will play an endless amount of calming and relaxing lofi for you to study to.
 
-## Read >> [Why lofi?](https://justmusicallyspeaking.com/en/what-makes-lo-fi-hip-hop-a-hidden-musical-treasure/)
+### Read >> [Why lofi?](https://justmusicallyspeaking.com/en/what-makes-lo-fi-hip-hop-a-hidden-musical-treasure/)
 
 # Setup
 
 In order to setup lofi.me to run correctly, you first need to install node.js.
 After, install the following packages with the following lines in Command Prompt / Terminal:
 
-#### Discord
+#### Discord API Wrapper
 ```
 npm install discord.js
 ```
-#### Debugging
+#### Logging
 ```
 npm install winston
 ```
@@ -27,7 +27,7 @@ npm install winston
 npm install ffmpeg-binaries
 npm install node-opus
 ```
-#### YouTube Streaming
+#### YouTube Data and Streaming
 ```
 npm install ytdl-core
 npm install youtube-api-v3-search
@@ -35,7 +35,7 @@ npm install youtube-api-v3-search
 
 Next, you are going to want to setup a Discord bot by going to https://discordapp.com/developers/applications and set up a new application and a bot. There are plenty of guides out there on how to get started. I recommend starting with [this one](https://www.digitaltrends.com/gaming/how-to-make-a-discord-bot/).
 
-Once your bot is setup, you want to go into the auth.json file and copy your Discord Client ID and copy it to the `token` field.
+Once your bot is setup, you want to go into the auth.json file and copy your Discord Client ID to the `token` field.
 
 In order to query YouTube, you're also going to need a Google Cloud API Key. You can get one by setting up a new project in the Google Cloud at https://console.cloud.google.com. Once you have your project just create a new credential and you'll have an API Key ready to use. Just copy that over to the `ytkey` field in auth.json and your bot will now be ready to stream music!
 
