@@ -23,6 +23,8 @@ logger.level = 'debug';
 
 // Initialize Discord Bot
 const bot = new Discord.Client();
+
+// initialize Spotify API wrapper with Client Credentials Flow
 const spotifyApi = new SpotifyWebApi({
   clientId: auth.clientId,
   clientSecret: auth.clientSecret

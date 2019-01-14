@@ -51,6 +51,8 @@ You can call lofi.me by starting commands with an exclamation mark: '!ping'
 |`!greet`   | Greets the user  |
 |`!rolldice`   | Rolls a fair 6 sided die  |
 |`!stream`   | Joins your current voice channel and streams lofi music |
+| `!songoftheday`  | Returns a YouTube link to the song of the day  |
+| `!recommendme`   | Returns a YouTube link of a random recommended song  |
 
 ___
 # Plans
